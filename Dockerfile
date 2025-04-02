@@ -21,4 +21,4 @@ RUN chmod +x /wait-for-postgres.sh
 EXPOSE 5000
 
 # Wait for Postgres, then run app
-CMD ["/wait-for-postgres.sh", "python", "run.py"]
+CMD ["python", "run.py"]
