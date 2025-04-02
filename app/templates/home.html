@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home_page.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>RealAnalytics</title>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="nav-item logo-item">REAL-ANALYTICS</a>
+        <a href="/dashboard" class="nav-item">DASHBOARD</a>
+        <a href="https://www.linkedin.com/in/aashish-singh-bisht/" class="nav-item">REACH OUT</a>
+    </nav>
+      
+
+    <div class="mainContainer">
+        {% for article in articles.values() %}
+        <a href="/article?article_id={{ article.id }}" class="blogContainer" data-article-id="{{article.id}}">
+            <div class="imageContainer">
+                <img src="../static/images/article{{ article.id }}.png" alt="article {{ article.id }}">
+            </div>
+            <div class="descriptionContainer">
+                {{ article.headline }}
+            </div>
+            <div class="descriptionText">
+                {{ article.description | safe }}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            $(".blogContainer").on("click", function(event) {
+                event.preventDefault();
+
+                // Get the article_id from data-attribute
+                let articleId = $(this).data("article-id");
+
+                // Send click data to backend via POST request
+                $.ajax({
+                    type: "POST",
+                    url: "/update-analytics", // Backend route to handle tracking
+                    contentType: "application/json",
+                    data: JSON.stringify({ article_id: articleId, event_type:"click"}),
+                    success: function (response) {
+                        console.log(`Click tracked for article ID: ${articleId}`);
+                        // Redirect to the clicked article after tracking
+                        window.location.href = $(event.target).closest("a").attr("href");
+                    },
+                    error: function () {
+                        console.error("Failed to track click.");
+                    },
+                });
+            })
+        })
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home_page.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>{{articleData.headline}}</title>
+</head>
+<!-- #676767 -->
+<body style="background: url('../static/images/article{{article_number}}.png') no-repeat center center fixed;background-size: cover;">
+    <div class="headline">{{articleData.headline}}</div>
+    <div class="contentContainer">
+        {{articleData.content | safe}}
+    </div>
+
+    <script>
+        let startTime = Date.now();
+        let hasSent = false;
+        let idleTimer = null;
+        const idleTimeout = 60 * 1000; // 1 minute of inactivity
+        
+        function sendTimeSpent() {
+          if (hasSent) return;
+          hasSent = true;
+        
+          const endTime = Date.now();
+          const timeSpentMs = endTime - startTime;
+          const timeSpentMin = +(timeSpentMs / (1000 * 60)).toFixed(2);
+        
+          // Replace with actual article_id
+          const articleId = document.getElementById('articleSelect')?.value || '1';
+        
+          navigator.sendBeacon(
+            '/track-time',
+            JSON.stringify({ article_id: articleId, time_spent: timeSpentMin })
+          );
+        }
+        
+        // Detect tab close or reload
+        window.addEventListener('beforeunload', sendTimeSpent);
+        
+        // Detect if user becomes idle
+        function resetIdleTimer() {
+          if (idleTimer) clearTimeout(idleTimer);
+          idleTimer = setTimeout(sendTimeSpent, idleTimeout);
+        }
+        
+        ['mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event =>
+          document.addEventListener(event, resetIdleTimer)
+        );
+        
+        resetIdleTimer(); // Start timer on load
+    </script>
+        
+</body>
+</html>
