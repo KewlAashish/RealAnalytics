@@ -1,6 +1,8 @@
 import os
+import time
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import OperationalError
 
 db = SQLAlchemy()
 
@@ -18,9 +20,20 @@ def create_app():
     from .routes import main  
     app.register_blueprint(main)
 
-    # import models so that they are registered
+    # Import models so they are registered
     with app.app_context():
         from . import models
-        db.create_all()
-        
+
+        # Retry DB connection for up to 10 seconds
+        for i in range(10):
+            try:
+                db.create_all()
+                print("✅ Database connection and table creation successful.")
+                break
+            except OperationalError:
+                print(f"🔁 DB connection failed (attempt {i+1}/10). Retrying...")
+                time.sleep(1)
+        else:
+            raise Exception("❌ Database connection failed after 10 retries.")
+
     return app
