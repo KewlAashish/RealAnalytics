@@ -92,7 +92,37 @@ def track_time():
 @main.route('/test-insert')
 def insert_test():
     record = ArticleAnalytics(
-        article_id='5',
+        article_id='1',
+        clicks=34,
+        time_spent=12.5,
+        browser_counts={"Chrome": 8, "Firefox": 23},
+        os_counts={"Windows": 5, "Mac": 12}
+    )
+    db.session.add(record)
+    db.session.commit()
+
+    record = ArticleAnalytics(
+        article_id='2',
+        clicks=34,
+        time_spent=12.5,
+        browser_counts={"Chrome": 8, "Firefox": 23},
+        os_counts={"Windows": 5, "Mac": 12}
+    )
+    db.session.add(record)
+    db.session.commit()
+
+    record = ArticleAnalytics(
+        article_id='3',
+        clicks=34,
+        time_spent=12.5,
+        browser_counts={"Chrome": 8, "Firefox": 23},
+        os_counts={"Windows": 5, "Mac": 12}
+    )
+    db.session.add(record)
+    db.session.commit()
+
+    record = ArticleAnalytics(
+        article_id='4',
         clicks=34,
         time_spent=12.5,
         browser_counts={"Chrome": 8, "Firefox": 23},
