@@ -55,6 +55,7 @@ For each article:
 
 🔗 https://realanalytics.onrender.com/
 
+![Demo](project.gif)
 ---
 
 ## 🧪 Future Usecases (My Plans)
